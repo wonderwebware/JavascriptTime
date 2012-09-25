@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!-- we use jQuery in this example. jQuery is not required, but I wish to show how it works with the library -->
+<script type='text/javascript' src='http://code.jquery.com/jquery.js'></script>
+
+<!-- include the jstimeWatch library; here we use the development version (heavily commented) but in real life 
+	 you'll want to use the minified version: jsTimeWatch.min.js -->
+<script type='text/javascript' src='jsTimeWatch.min.js'></script>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+
+<!--
+	see the documentation for more: 
+	http://wonderwebware.com/javascript-time/ 
+-->
+
+<script type='text/javascript'>
+//<![CDATA[ 
+
+/* this function converts the "time" object, returned from stopWatch and
+   backWatch functions; the time structure looks like this:
+	time.hh -> hours
+	time.mm -> minutes
+	time.ss -> seconds
+	time.ms -> milliseconds
+	time.negative --> true = time < 0
+*/
+function toTime(_time){
+	if(_time==null)return '';
+	if(_time.negative)return ('-'+_time.hh+':'+_time.mm+':'+_time.ss+':'+_time.ms);
+ 	return (_time.hh+':'+_time.mm+':'+_time.ss+':'+_time.ms);
+}
+
+/* create stopWatch and backWatch objects */
+var stopWatch = new jtl.stopWatch(); 
+var backWatch = new jtl.backWatch(); 
+
+/* executed on "start" link clicked: */
+function start(){
+	if(stopWatch.start()!=null){
+		stopWatch.executeOnRefresh(refresh); //function to execute on refresh
+		var value= stopWatch.splittime();
+		$('#timer').find('.value').text(toTime(value));	   
+		$('#split_times').html('');
+	}
+}
+
+/* will execute when "stop" is clicked */
+function stop(){
+	var value= stopWatch.stoptime();
+	if(value==null)return; //no time returned, timer not started?
+	$('#timer').find('.value').text(toTime(value));	
+	var curr=$('#split_times').html();	
+	$('#split_times').html(curr+'<br />'+toTime(value));	
+}
+
+/* get the "split" time (without stopping timer) */
+function split(){
+	var value= stopWatch.splittime();
+	if (value==null) return;
+	$('#timer').find('.value').text(toTime(value));	
+	var curr=$('#split_times').html();	
+	$('#split_times').html(curr+'<br />'+toTime(value));	
+}
+ 
+/* visualize time in the stopWatch #timer div */ 
+function refresh(){
+	var value= stopWatch.splittime();
+	if (value!=null) $('#timer').find('.value').text(toTime(value)); 	
+}
+
+/* start backward counting on "start" link pressed */
+function startB(){
+	if(backWatch.startHMS(0,0,5)!=null){
+		backWatch.executeOnRefresh(refresh2); //function to execute on refresh
+		backWatch.executeOnEnd(now1); //function to execute on end
+		var value= backWatch.splittime();
+		$('#backtimer').find('.value').text(toTime(value));	   
+	}
+}
+
+/* stop the backward clock */
+function stopB(){
+	var value= backWatch.stoptime();
+	if(value==null)return; //no time returned, timer not started?
+	$('#backtimer').find('.value').text(toTime(value));	
+}  
+ 
+/* refresh backward clock value */  
+function refresh2(){
+	value= backWatch.splittime();
+	if (value!=null) $('#backtimer').find('.value').text(toTime(value));	 	
+}
+/* function to be executed when there is no time left in the back-counter */
+function now1(){ 
+	var value= backWatch.splittime();
+	var curr=$('#backtime_end').html();	
+	$('#backtime_end').html(curr+'<br />'+toTime(value));	
+	alert('NOW!');
+ }
+
+/* example on how to use alertAfter function */
+function alertAfter5seconds(){
+	start(); //just to see how it goes...
+	jtl.alertAfter(0,0,5,showAlert);
+	
+}
+function showAlert(){
+	stop(); //stop the timer...
+	alert('5 seconds passed!');
+}
+
+//]]>  
+</script>
+</head>
+
+<body>
+<em>stopWatch:</em><br />
+<br />
+<div id="timer"><span class="value">0</span></div>
+<p><a href="#" onClick="start();">start</a> | <a href="#" onClick="split();">split</a> | <a href="#" onClick="stop();">stop</a></p>
+<div id="split_times"></div>
+<p>&nbsp;</p>
+<em>backWatch:</em><br />
+<br />
+<div id="backtimer"><span class="value">0</span></div>
+<p><a href="#" onClick="startB();">start</a> | <a href="#" onClick="stopB();">stop</a></p>
+<div id="backtime_end"></div>
+<p>&nbsp;</p>
+<em> alertAfter(): </em>
+<p><a href="#" onClick="alertAfter5seconds();">alert after 5 seconds</a> </p>
+</body>
+</html>
