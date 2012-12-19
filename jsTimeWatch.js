@@ -5,10 +5,7 @@
 	
 	Released under the MIT, BSD, LGPL and GPL Licenses: 
 	http://wonderwebware.com/javascript-time/license.html
-	
-	Version History:
-	================
-	Version 1.0 - Release date: 5 April 2012
+
 	
 	Usage Notes:
 	============
@@ -40,9 +37,9 @@ var jtl = { //the "namespace" encapsulator
 	
 	/*	The getTime() function just returns the time in ms	*/
 	getTime: function() {
-		 // var absTime = new Date(); //an object we will use to get system time
-		 // return absTime.getTime();	//get ms since midnight 1 Jan 1970 (UTC)
-		 return Date().now(); //http://jsperf.com/date-gettime-vs-date-now
+		  var absTime = new Date(); //an object we will use to get system time
+		  return absTime.getTime();	//get ms since midnight 1 Jan 1970 (UTC)
+		 //return Date().now(); //http://jsperf.com/date-gettime-vs-date-now
 	},
 	
 	/*	Convert milliseconds to useful units; usage: ret = jtl.msToTime(x); */
@@ -114,7 +111,8 @@ var jtl = { //the "namespace" encapsulator
 		  isStarted = false, //is_stopwatch_working? flag
   		  refreshInterval = 50, // 50ms means we execute refresh method 20 times per second (standard film interval is 24 frames per second, but 16fps is considered enough)
 		  updateOn = false, //we dont start updater if user don't give us callback function (executeOnRefresh)
-		  updater = null; //here we will keep setInterval return value for properly shut down timer on end of work		
+		  updater = null, //here we will keep setInterval return value for properly shut down timer on end of work		
+		  addOnContinue = 0; //[2.0] this will be used for [Continue] button
 
 	  /* =======================================
 		 START method; usage: stopWatch.start(); 
@@ -132,7 +130,7 @@ var jtl = { //the "namespace" encapsulator
 	    ===========================================================================================================*/
 	  this.splittime = function(){
 		  if(!isStarted)return null; //must start timer first
-		  return jtl.msToTime(jtl.getTime()-startTime);
+		  return jtl.msToTime(addOnContinue+(jtl.getTime()-startTime));//[2.0]addOnContinue contains past values after pause/continue
 	  }
 	  /*==========================
 	  	STOP timer and reset state
@@ -142,7 +140,8 @@ var jtl = { //the "namespace" encapsulator
 		  var time=jtl.getTime();
 		  isStarted=false;
 		  if(updateOn)clearInterval(updater); //stop the refresh timer if not needed anymore
-		  return jtl.msToTime(time-startTime);
+		  addOnContinue+=(time-startTime); //[2.0]collect time after stop/continue clicks
+		  return jtl.msToTime(addOnContinue);
 	  }
 	  /* ===============================================================================
 	     If needed, change refresh intercal with this method, but don't think you'll get
@@ -161,7 +160,12 @@ var jtl = { //the "namespace" encapsulator
 			updater = setInterval(func,refreshInterval);
 		 }
 	  }
-	   	  
+	  this.resettime = function(){
+		  if(isStarted)return false; //must stop timer first
+			addOnContinue = 0; //[2.0] reset any pause/continue clicks so far
+			return true;
+	  }
+	  	  
 	}, 
 	//****************************************************************************************************************************
 	// END stopWatch() "class" ***************************************************************************************************

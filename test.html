@@ -6,7 +6,7 @@
 
 <!-- include the jstimeWatch library; here we use the development version (heavily commented) but in real life 
 	 you'll want to use the minified version: jsTimeWatch.min.js -->
-<script type='text/javascript' src='jsTimeWatch.min.js'></script>
+<script type='text/javascript' src='jsTimeWatch.js'></script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Untitled Document</title>
@@ -43,8 +43,15 @@ function start(){
 		stopWatch.executeOnRefresh(refresh); //function to execute on refresh
 		var value= stopWatch.splittime();
 		$('#timer').find('.value').text(toTime(value));	   
-		$('#split_times').html('');
 	}
+}
+
+function resettimer(){
+/* on "reset" button clicked -- clear all values*/
+		if(stopWatch.resettime()==false)return; //on error (started timer) it returns false; stop timer first!	
+		$('#timer').find('.value').text('0');	   
+		$('#split_times').html('');
+	
 }
 
 /* will execute when "stop" is clicked */
@@ -120,7 +127,7 @@ function showAlert(){
 <em>stopWatch:</em><br />
 <br />
 <div id="timer"><span class="value">0</span></div>
-<p><a href="#" onClick="start();">start</a> | <a href="#" onClick="split();">split</a> | <a href="#" onClick="stop();">stop</a></p>
+<p><a href="#" onClick="start();">start</a> | <a href="#" onClick="split();">split</a> | <a href="#" onClick="stop();">stop</a> | <a href="#" onClick="resettimer();">reset</a></p>
 <div id="split_times"></div>
 <p>&nbsp;</p>
 <em>backWatch:</em><br />

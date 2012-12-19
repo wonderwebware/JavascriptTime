@@ -9,7 +9,8 @@
 	
 	Version History:
 	================
-	Version 1.0 - Release date: 5 April 2012
+	Varsion 2.0 - [19 Dec 2012] Added pause/continue functionality for the stopWatch "class" and resp. "resettime" method
+	Version 1.0 - [5 April 2012] Initial Release
 	
 	Note about precision: this is JavaScript. 
 	It should be obvious, but still -- the precision wasn't a gola when building this library. All these timers should give the right value in term of seconds, but don't expect 
